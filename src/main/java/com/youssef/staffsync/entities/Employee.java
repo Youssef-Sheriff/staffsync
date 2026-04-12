@@ -1,45 +1,45 @@
 package com.youssef.staffsync.entities;
 
-import jakarta.validation.constraints.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-
+@Entity
+@Table(name = "employee")
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Employee {
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
     private UUID id;
 
-    @NotNull(message = "first name is required.")
-    @Size(min = 3, max = 10, message = "min is 3 chars, and max is 10 chars")
+    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @NotNull(message = "last name is required.")
-    @Size(min = 3, max = 10, message = "min is 3 chars, and max is 10 chars")
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Email(message = "Invalid email format.")
-    @NotNull(message = "Email is required.")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotNull(message = "phone number is required.")
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Invalid phone number")
+    @Column(name = "phone_number", length = 25)
     private String phoneNumber;
 
-    @NotNull(message = "hireDate is required.")
-    @PastOrPresent(message = "Hire date cannot be in the future.")
+    @Column(name = "hire_date", nullable = false)
     private LocalDate hireDate;
 
-    @NotNull(message = "position is required.")
-    @Size(min = 2, max = 20, message = "min is 2 chars, and max is 20 chars")
+    @Column(name = "position", nullable = false)
     private String position;
 
-    private UUID departmentId;
-
-
+    @Column(name = "department_id", nullable = false)
+    private UUID departmentId = UUID.randomUUID();
 }
