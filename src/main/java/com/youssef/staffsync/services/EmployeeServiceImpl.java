@@ -3,7 +3,9 @@ package com.youssef.staffsync.services;
 import com.youssef.staffsync.abstracts.EmployeeService;
 import com.youssef.staffsync.dtos.EmployeeCreate;
 import com.youssef.staffsync.dtos.EmployeeUpdate;
+import com.youssef.staffsync.entities.Department;
 import com.youssef.staffsync.entities.Employee;
+import com.youssef.staffsync.repositories.DepartmentRepo;
 import com.youssef.staffsync.repositories.EmployeeRepo;
 import com.youssef.staffsync.shared.CustomResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepo employeeRepo;
 
-    @Override
+    @Autowired
+    private DepartmentRepo departmentRepo;
+
     public Employee findOne(UUID employeeId) {
         Employee employee = employeeRepo.findById(employeeId)
                 .orElseThrow(() -> CustomResponseException.ResourceNotFound(
@@ -26,12 +30,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
-    @Override
     public List<Employee> findAll() {
         return employeeRepo.findAll();
     }
 
-    @Override
     public void deleteOne(UUID employeeId) {
         Employee employee = employeeRepo.findById(employeeId)
                 .orElseThrow(() -> CustomResponseException.ResourceNotFound(
@@ -41,7 +43,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepo.delete(employee);
     }
 
-    @Override
     public Employee update(UUID employeeId, EmployeeUpdate updateEmployee) {
         Employee employee = employeeRepo.findById(employeeId)
                 .orElseThrow(() -> CustomResponseException.ResourceNotFound(
@@ -57,16 +58,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
-    @Override
     public Employee create(EmployeeCreate employeeCreate) {
         Employee employee = new Employee();
-        employee.setDepartmentId(UUID.randomUUID());
+
+        Department department = departmentRepo.findById(employeeCreate.departmentId())
+                .orElseThrow(() -> CustomResponseException.ResourceNotFound(
+                        "Department with id " + employeeCreate.departmentId() + " not found"
+                ));
+
         employee.setFirstName(employeeCreate.firstName());
         employee.setLastName(employeeCreate.lastName());
         employee.setEmail(employeeCreate.email());
         employee.setPhoneNumber(employeeCreate.phoneNumber());
         employee.setPosition(employeeCreate.position());
         employee.setHireDate(employeeCreate.hireDate());
+        employee.setDepartment(department);
 
         employeeRepo.save(employee);
 

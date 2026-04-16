@@ -20,9 +20,6 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-//    public EmployeeController(EmployeeService employeeService) {
-//        this.employeeService = employeeService;
-//    }
 
     @GetMapping
     public ResponseEntity<GlobalResponse<List<Employee>>> findAll() {
@@ -51,8 +48,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<GlobalResponse<Employee>> createOne(@RequestBody @Valid EmployeeCreate employee) {
-        Employee newEmployee = employeeService.create(employee);
+    public ResponseEntity<GlobalResponse<Employee>> createOne(@RequestBody @Valid EmployeeCreate employeeCreate) {
+        Employee newEmployee = employeeService.create(employeeCreate);
         return new ResponseEntity<>(new GlobalResponse<>(newEmployee), HttpStatus.CREATED);
     }
 
